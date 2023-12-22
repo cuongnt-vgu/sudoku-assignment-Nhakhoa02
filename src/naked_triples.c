@@ -135,24 +135,11 @@ int naked_triples(SudokuBoard *p_board)
         find_naked_triples(p_board -> p_rows[i], naked_arr, &res, &num_arr);
         find_naked_triples(p_board -> p_boxes[i], naked_arr, &res, &num_arr);
     }
-    //printf("check: %d", p_board->p_cols[7][8]->num_candidates);
 
-    // for (int i = 0 ; i < res; ++i){
-    //     printf("naked arr: %d \n", naked_arr[2*i].p_cell->num_candidates);
-    // }
-    // unset_candidate(p_board->p_rows[2][7], 2);
 
     for (int i = 0 ; i < num_arr; ++i){
         unset_naked_triples(naked_arr[i].p_cells, naked_arr,&i, &num_arr);
-        // int * candidates = get_candidates(naked_arr[2*i].p_cell);
-        // for (int j = 0; j < naked_arr[2*i].p_cell->num_candidates; ++j){
-        //     printf("%d ", candidates[j]);
-        // }
-        // printf("\n");
-        // free(candidates);
     }
-
-    //prinf("%d", p_board->p_cols[0][8])
 
     return res;
 }
