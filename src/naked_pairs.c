@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 // find naked pairs values (the value that is unique among all the candidates for a row, a collumn, or a box)
-bool is_the_same(Cell * p_cell_1, Cell * p_cell_2){
+bool is_the_same_pairs(Cell * p_cell_1, Cell * p_cell_2){
     int * candidates_1 = get_candidates(p_cell_1);
     int * candidates_2 = get_candidates(p_cell_2);
 
@@ -28,7 +28,7 @@ void find_naked_pairs(Cell **p_cells, NakedPairs *p_naked_pairs, int *p_counter,
         if (p_cells[i] -> num_candidates == 2) {
             for (int j = i+1 ; j < BOARD_SIZE; ++j){
                 if ((p_cells[j] -> num_candidates == 2)
-                && (is_the_same(p_cells[i], p_cells[j])))
+                && (is_the_same_pairs(p_cells[i], p_cells[j])))
                 {
                     bool is_Duplicate = false;
 
@@ -72,7 +72,7 @@ void unset_naked_pairs(Cell **p_cells, NakedPairs *p_naked_pairs, int * order, i
             // }
     
             for (int j = 0; j < p_cells[i]->num_candidates; ++j){
-                for (int k = 0 ; k < p_cells[2*(*order)]->num_candidates; ++k){
+                for (int k = 0 ; k < p_naked_pairs[2*(*order)].p_cell->num_candidates; ++k){
                     if (candidates_1[j] == candidates_2[k]){
                         //printf("candidate: %d \n", candidates_1[j]);
                         unset_candidate(p_cells[i], candidates_1[j]);
