@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -ggdb3 -Wall -Wextra -Wshadow -std=gnu11 -Wno-unused-parameter -Wno-unused-but-set-variable -Werror
+FLAGS = -ggdb3 -Wall -Wextra -Wshadow -std=gnu11 -Wno-unused-parameter -Wno-unused-but-set-variable
 
 # Linking ncurses works differently on Linux and Mac. Detect
 # OS to account for this
