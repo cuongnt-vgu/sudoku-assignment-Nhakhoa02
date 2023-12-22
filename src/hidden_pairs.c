@@ -80,7 +80,7 @@ void unset_hidden_pairs(HiddenPairs p_hidden_pairs){
             }
 
             if (!is_value) {
-                printf("candidate: %d \n", candidates[j]);
+                //printf("candidate: %d \n", candidates[j]);
                 unset_candidate(p_hidden_pairs.p_cell[i], candidates[j]);
             }
         }

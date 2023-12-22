@@ -58,7 +58,7 @@ int main(int argc, char **argv)
         if (solved_counter)
         {
             continue;
-        }
+        } 
     }
     print_solution(board);
 
