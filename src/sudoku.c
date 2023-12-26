@@ -10,6 +10,7 @@
 #include "hidden_pairs.h"
 #include "hidden_triples.h"
 
+
 int main(int argc, char **argv)
 {
     if (argc != 2)
@@ -25,38 +26,44 @@ int main(int argc, char **argv)
     Cell **p_solved_cells = board->solved_cells;
     int solved_counter = board->solved_counter;
     while (board->solved_counter < BOARD_SIZE * BOARD_SIZE)
+    //for (int i = 0 ; i < 1; ++i)
     {
         solved_counter = check_solved_cells(board, &p_solved_cells);
-        // printf("check_solved_cells %d\n", solved_counter);
+        if (solved_counter == 0) break;
+        printf("check_solved_cells %d\n", solved_counter);
         if (show_possible(board, p_solved_cells, solved_counter))
         {
-            // printf("show_possible -> Yes\n");
+            printf("show_possible -> Yes\n");
             continue;
         }
         else solved_counter = hidden_singles(board);
         if (solved_counter)
         {
-             //printf("hidden_singles %d\n", solved_counter);
-             continue;
+            printf("hidden_singles %d\n", solved_counter);
+            continue;
         }
         else solved_counter = naked_pairs(board);
         if (solved_counter)
         {
+            printf("naked_pairs %d\n", solved_counter);
             continue;
         }
-        else solved_counter = naked_tripples(board);
+        else solved_counter = naked_triples(board);
         if (solved_counter)
         {
+            printf("naked_triples %d\n", solved_counter);
             continue;
         }
         else solved_counter = hidden_pairs(board);
         if (solved_counter)
         {
+            printf("hidden_pairs %d\n", solved_counter);
             continue;
         }
         else solved_counter = hidden_triples(board);
         if (solved_counter)
         {
+            printf("hidden_triples %d\n", solved_counter);
             continue;
         } 
     }
