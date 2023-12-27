@@ -28,44 +28,44 @@ int main(int argc, char **argv)
     // for (int i = 0; i < 20; ++i)
     {
         solved_counter = check_solved_cells(board, &p_solved_cells);
-        printf("check_solved_cells %d\n", solved_counter);
+        // printf("check_solved_cells %d\n", solved_counter);
         if (show_possible(board, p_solved_cells, solved_counter))
         {
-            printf("show_possible -> Yes\n");
+            // printf("show_possible -> Yes\n");
             continue;
         }
         else solved_counter = hidden_singles(board);
         if (solved_counter)
         {
-             printf("hidden_singles %d\n", solved_counter);
+            //  printf("hidden_singles %d\n", solved_counter);
              continue;
         }
         else solved_counter = naked_pairs(board);
         solved_counter = check_solved_cells(board, &p_solved_cells);
         if (solved_counter)
         {
-            printf("naked_pairs %d\n", solved_counter);
+            // printf("naked_pairs %d\n", solved_counter);
             continue;
         }
         else solved_counter = naked_triples(board);
         solved_counter = check_solved_cells(board, &p_solved_cells);
         if (solved_counter)
         {
-            printf("naked_triples %d\n", solved_counter);
+            // printf("naked_triples %d\n", solved_counter);
             continue;
         }
         else solved_counter = hidden_pairs(board);
         solved_counter = check_solved_cells(board, &p_solved_cells);
         if (solved_counter)
         {
-            printf("hidden_pairs %d\n", solved_counter);
+            // printf("hidden_pairs %d\n", solved_counter);
             continue;
         }
         else solved_counter = hidden_triples(board);
         solved_counter = check_solved_cells(board, &p_solved_cells);
         if (solved_counter)
         {
-            printf("hidden_triples %d\n", solved_counter);
+            // printf("hidden_triples %d\n", solved_counter);
             continue;
         } 
     }
