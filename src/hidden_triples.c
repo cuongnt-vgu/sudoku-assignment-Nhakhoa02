@@ -2,103 +2,148 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+int is_hidden(Cell *p_cell, int * value_count, int * hidden_arr){
+    //initial create arr to store the appearance of values
+    int * candidates = get_candidates(p_cell);
+    int res = 0;
+
+    for (int i = 0 ; i < p_cell->num_candidates; ++i){
+        if (value_count[candidates[i] - 1] == 0) {
+            hidden_arr[res] = candidates[i];
+            ++res;
+        }
+    }
+
+    free(candidates);
+
+    return res;
+}
+
+bool is_duplicate_hidden_triples(Cell *p_cell_1, Cell *p_cell_2, Cell *p_cell_3, HiddenTriples *p_hidden_triples, int *p_counter)
+{
+    for (int i = 0; i < *p_counter; ++i)
+    {
+        Cell *existing_cell_1 = p_hidden_triples[i].p_cell[0];
+        Cell *existing_cell_2 = p_hidden_triples[i].p_cell[1];
+        Cell *existing_cell_3 = p_hidden_triples[i].p_cell[2];
+
+        // Check if the cells are the same (order-independent)
+        bool same_cells =
+            (p_cell_1 == existing_cell_1 || p_cell_1 == existing_cell_2 || p_cell_1 == existing_cell_3) &&
+            (p_cell_2 == existing_cell_1 || p_cell_2 == existing_cell_2 || p_cell_2 == existing_cell_3) &&
+            (p_cell_3 == existing_cell_1 || p_cell_3 == existing_cell_2 || p_cell_3 == existing_cell_3);
+
+        if (same_cells)
+        {
+            // The triple is a duplicate
+            return true;
+        }
+    }
+
+    // No duplicate found
+    return false;
+}
+
 void is_the_hidden_triples(Cell **p_cells, HiddenTriples *p_hidden_triples, Cell *p_cell_1, Cell *p_cell_2, Cell *p_cell_3, int *p_counter) {
+    bool is_naked = true;
+    if (p_cell_1 -> num_candidates > 3) is_naked = false;
+    if (p_cell_2 -> num_candidates > 3) is_naked = false;
+    if (p_cell_3 -> num_candidates > 3) is_naked = false;
+
+    if (is_naked) return;
+
     int value_count[BOARD_SIZE];
-    int num_count = 0; // Number of values that appear 3 times
-    int num_diff = 0; 
+    for (int i = 0; i < BOARD_SIZE; ++i) value_count[i] = 0;
 
-    for (int i = 0; i < BOARD_SIZE; ++i)
-        value_count[i] = 0;
-
-    int *candidates_1 = get_candidates(p_cell_1);
-    int *candidates_2 = get_candidates(p_cell_2);
-    int *candidates_3 = get_candidates(p_cell_3);
-
-    for (int i = 0; i < BOARD_SIZE; ++i) { 
-        int * candidates_4 = get_candidates(p_cells[i]);
-        for (int j = 0 ; j < p_cells[i] -> num_candidates; ++j) {
-            ++value_count[candidates_4[j] - 1];
-        }
-        free(candidates_4);
+    for (int i = 0 ; i < BOARD_SIZE; ++i){
+        if (
+            (p_cells[i] != p_cell_1)
+            && (p_cells[i] != p_cell_2)
+            && (p_cells[i] != p_cell_3)
+        ) {
+            int * candidates = get_candidates(p_cells[i]);
+            for (int j = 0 ; j < p_cells[i]->num_candidates; ++j){
+                ++value_count[candidates[j] - 1];
+            }
+            free(candidates);
+        }        
     }
 
-    // for (int i =0; i < BOARD_SIZE; ++i)
-    //     printf("%d ",value_count[i]);
-    // printf("\n");
+    //get hidden values for p_cell_1
+    int hidden_arr_1[BOARD_SIZE];
+    int num_hidden_1 = is_hidden(p_cell_1, value_count, hidden_arr_1);
+
+    //get hidden values for p_cell_2
+    int hidden_arr_2[BOARD_SIZE];
+    int num_hidden_2 = is_hidden(p_cell_2, value_count, hidden_arr_2);
+
+    //get hidden values for p_cell_3
+    int hidden_arr_3[BOARD_SIZE];
+    int num_hidden_3 = is_hidden(p_cell_3, value_count, hidden_arr_3);
+
+    if (num_hidden_1 < 2 || num_hidden_1 > 3) return;
+    if (num_hidden_2 < 2 || num_hidden_2 > 3) return;
+    if (num_hidden_3 < 2 || num_hidden_3 > 3) return;
+
     
-    bool is_triples = true;
 
+    //findind triples
+    int num_diff = 0;
 
-    //first-----------------------------------------------------------------------
-    for (int i = 0; i < p_cell_1 -> num_candidates; ++i){
-        if (value_count[candidates_1[i] - 1] == 2 
-        || value_count[candidates_1[i] - 1] == 3)
-        {
-            p_hidden_triples[*p_counter].value[num_diff] = candidates_1[i];
+    for (int i = 0 ; i < BOARD_SIZE; ++i) value_count[i] = 0;
+
+    for (int i = 0 ; i < num_hidden_1; ++i)
+    {
+        //printf("%d ", candidates_1[i-1]);
+        if (num_diff == 4) break;
+        if (value_count[hidden_arr_1[i] - 1] == 0) {
+            p_hidden_triples[*p_counter].value[num_diff] = hidden_arr_1[i];
             ++num_diff;
-            ++num_count;
-            value_count[candidates_1[i] - 1] = 10;
         }
-        else if (value_count[candidates_1[i] - 1] == 10) ++num_count;
+        ++value_count[hidden_arr_1[i] - 1];
+    }
+    // printf("\n");
+    for (int i = 0 ; i < num_hidden_2; ++i)
+    {
+        // printf("%d ", candidates_2[i]);
+        if (num_diff == 4) break;
+        if (value_count[hidden_arr_2[i] - 1] == 0) {
+            p_hidden_triples[*p_counter].value[num_diff] = hidden_arr_2[i];
+            ++num_diff;
+        }
+        ++value_count[hidden_arr_2[i] - 1];
+    }
+    // printf("\n");
+    for (int i = 0 ; i < num_hidden_3; ++i)
+    {
+        // printf("%d ", candidates_3[i]);
+        if (num_diff == 4) break;
+        if (value_count[hidden_arr_3[i] - 1] == 0){
+            p_hidden_triples[*p_counter].value[num_diff] = hidden_arr_3[i];
+            ++num_diff;
+        } 
+        ++value_count[hidden_arr_3[i] - 1];
     }
 
-    if (num_count != 2 && num_count != 3) is_triples=false;
-    num_count = 0;
-
-    // printf("num_diff_1: %d \n", num_diff);
-
-    //second-------------------------------------------------------------------------
-    for (int i = 0; i < p_cell_2 -> num_candidates; ++i){
-        if (value_count[candidates_2[i] - 1] == 2 
-        || value_count[candidates_2[i] - 1] == 3)
-        {
-            p_hidden_triples[*p_counter].value[num_diff] = candidates_2[i];
-            ++num_diff;
-            ++num_count;
-            value_count[candidates_2[i] - 1] = 10;
+    if (num_diff == 3) {
+        if (!is_duplicate_hidden_triples(p_cell_1, p_cell_2, p_cell_3, p_hidden_triples, p_counter)){
+            p_hidden_triples[*p_counter].p_cell[0] = p_cell_1;
+            p_hidden_triples[*p_counter].p_cell[1] = p_cell_2;
+            p_hidden_triples[*p_counter].p_cell[2] = p_cell_3;
+            ++(*p_counter);
         }
-        else if (value_count[candidates_2[i] - 1] == 10) ++num_count;
-    }
-    // printf("num_diff_2: %d \n", num_diff);
-
-    if (num_count != 2 && num_count != 3) is_triples=false;
-    num_count = 0;
-
-    //third -----------------------------------------------------------------------
-    for (int i = 0; i < p_cell_3 -> num_candidates; ++i){
-        if (value_count[candidates_3[i] - 1] == 2 
-        || value_count[candidates_3[i] - 1] == 3)
-        {
-            p_hidden_triples[*p_counter].value[num_diff] = candidates_3[i];
-            ++num_diff;
-            value_count[candidates_3[i] - 1] = 10;
-        }
-        else if (value_count[candidates_3[i] - 1] == 10) ++num_count;
-    }
-    // printf("num_diff_3: %d \n", num_diff);
-
-    if (num_count != 2 && num_count != 3) is_triples=false;
-    num_count = 0;
-
-    free(candidates_1);
-    free(candidates_2);
-    free(candidates_3);
-//----------------------------------------------------------------------------------
-    if (num_diff < 4 && is_triples) {
-        p_hidden_triples[*p_counter].p_cell[0] = p_cell_1;
-        p_hidden_triples[*p_counter].p_cell[1] = p_cell_2;
-        p_hidden_triples[*p_counter].p_cell[2] = p_cell_3;
-        ++(*p_counter);
     }
 }
 
+
+
 void find_hidden_triples(Cell **p_cells, HiddenTriples *p_hidden_triples, int *p_counter) {
     for (int i = 0; i < BOARD_SIZE; ++i) {
-        if (p_cells[i]->num_candidates >= 3) {
+        if (p_cells[i]->num_candidates >= 2) {
             for (int j = i + 1; j < BOARD_SIZE; ++j) {
-                if (p_cells[j]->num_candidates >= 3) {
+                if (p_cells[j]->num_candidates >= 2) {
                     for (int k = j + 1; k < BOARD_SIZE; ++k) {
-                        if (p_cells[k]->num_candidates >= 3) {
+                        if (p_cells[k]->num_candidates >= 2) {
                             is_the_hidden_triples(p_cells, p_hidden_triples, p_cells[i], p_cells[j], p_cells[k], p_counter);
                         }
                     }
@@ -140,10 +185,10 @@ int hidden_triples(SudokuBoard *p_board) {
 
     HiddenTriples hidden_triples_arr[BOARD_SIZE * BOARD_SIZE];
 
-    for (int i = 0; i < 1; ++i) {
-        //find_hidden_triples(p_board->p_cols[i], hidden_triples_arr, &res);
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        find_hidden_triples(p_board->p_cols[i], hidden_triples_arr, &res);
         find_hidden_triples(p_board->p_rows[i], hidden_triples_arr, &res);
-        //find_hidden_triples(p_board->p_boxes[i], hidden_triples_arr, &res);
+        find_hidden_triples(p_board->p_boxes[i], hidden_triples_arr, &res);
     }
 
     for (int i = 0; i < res; ++i) {
