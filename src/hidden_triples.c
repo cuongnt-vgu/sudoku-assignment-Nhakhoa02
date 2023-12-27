@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int is_hidden(Cell *p_cell, int * value_count, int * hidden_arr){
+int is_hidden_triples(Cell *p_cell, int * value_count, int * hidden_arr){
     //initial create arr to store the appearance of values
     int * candidates = get_candidates(p_cell);
     int res = 0;
@@ -71,15 +71,15 @@ void is_the_hidden_triples(Cell **p_cells, HiddenTriples *p_hidden_triples, Cell
 
     //get hidden values for p_cell_1
     int hidden_arr_1[BOARD_SIZE];
-    int num_hidden_1 = is_hidden(p_cell_1, value_count, hidden_arr_1);
+    int num_hidden_1 = is_hidden_triples(p_cell_1, value_count, hidden_arr_1);
 
     //get hidden values for p_cell_2
     int hidden_arr_2[BOARD_SIZE];
-    int num_hidden_2 = is_hidden(p_cell_2, value_count, hidden_arr_2);
+    int num_hidden_2 = is_hidden_triples(p_cell_2, value_count, hidden_arr_2);
 
     //get hidden values for p_cell_3
     int hidden_arr_3[BOARD_SIZE];
-    int num_hidden_3 = is_hidden(p_cell_3, value_count, hidden_arr_3);
+    int num_hidden_3 = is_hidden_triples(p_cell_3, value_count, hidden_arr_3);
 
     if (num_hidden_1 < 2 || num_hidden_1 > 3) return;
     if (num_hidden_2 < 2 || num_hidden_2 > 3) return;
