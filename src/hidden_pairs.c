@@ -2,6 +2,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+bool are_hidden_pairs_equal(HiddenPairs pair1, HiddenPairs pair2) {
+    // Compare the cells (pointers)
+    if ((pair1.p_cell[0] == pair2.p_cell[0] && pair1.p_cell[1] == pair2.p_cell[1]) ||
+        (pair1.p_cell[0] == pair2.p_cell[1] && pair1.p_cell[1] == pair2.p_cell[0])) {
+        return true;  // The pairs are the same
+    }
+    return false;  // The pairs are different
+}
+
 void is_the_hidden_pairs(Cell **p_cells, HiddenPairs *p_hidden_pairs, Cell *p_cell_1, Cell *p_cell_2, int *p_counter){
     int value_count[BOARD_SIZE];
     int num_count = 0; //number of value appear 2 times;
@@ -45,9 +54,22 @@ void is_the_hidden_pairs(Cell **p_cells, HiddenPairs *p_hidden_pairs, Cell *p_ce
     free(candidates_2);
 
     if (num_count == 2){
-        p_hidden_pairs[*p_counter].p_cell[0] = p_cell_1;
-        p_hidden_pairs[*p_counter].p_cell[1] = p_cell_2;
-        ++(*p_counter);
+        bool is_duplicate = false;
+
+        // Check for duplicates before adding the new hidden pair
+        for (int i = 0; i < *p_counter; ++i) {
+            if (are_hidden_pairs_equal(p_hidden_pairs[i], (HiddenPairs){ .p_cell = {p_cell_1, p_cell_2} })) {
+                is_duplicate = true;
+                break;
+            }
+        }
+
+        if (!is_duplicate) {
+            p_hidden_pairs[*p_counter].p_cell[0] = p_cell_1;
+            p_hidden_pairs[*p_counter].p_cell[1] = p_cell_2;
+
+            ++(*p_counter);
+        }
     }
 }
 

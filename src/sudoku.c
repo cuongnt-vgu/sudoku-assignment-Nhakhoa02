@@ -44,7 +44,7 @@ int main(int argc, char **argv)
         {
             continue;
         }
-        else solved_counter = naked_tripples(board);
+        else solved_counter = naked_triples(board);
         if (solved_counter)
         {
             continue;
